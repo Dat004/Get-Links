@@ -66,6 +66,18 @@
         font-size: 15px;
       }
 
+      .flex {
+        display: flex;
+      }
+
+      .between {
+        justify-content: space-between;
+      }
+
+      .v-center {
+        align-items: center;
+      }
+
       @media screen and (max-width: 768px) {
         #root {
           max-width: 420px;
@@ -86,8 +98,16 @@
         placeholder="Nhập vào đây!"
       ></textarea>
       <button id="get_btn">Lấy tất cả Link</button>
-      <section id="results"></section>
-      <button id="copy_btn">Sao chép</button>
+      <textarea
+        rows="3"
+        name="results"
+        id="results"
+        placeholder="Kết quả"
+      ></textarea>
+      <section class="flex between v-center">
+        <button id="copy_btn">Sao chép</button>
+        <p>Tổng số: <strong id="total_link">0</strong></p>
+      </section>
     </div>
 
     <script>
@@ -108,6 +128,7 @@
 
           if (value) {
             const res = value.match(regex);
+            listLink.splice(0);
 
             if (res) {
               listLink.push(...res);
@@ -118,11 +139,11 @@
             results.innerHTML = "";
 
             if (listLink.length > 0) {
+              const totalLink = document.getElementById("total_link");
+
+              totalLink.textContent = listLink.length; // Show total links
               listLink.map((link) => {
-                const p = document.createElement("p");
-                p.classList.add("result-item");
-                p.textContent = link;
-                results.appendChild(p);
+                results.value = results.value + link + "\r\n";
               });
             } else {
               const message = document.createElement("span");
@@ -134,7 +155,7 @@
 
         copyBtn.addEventListener("click", async (e) => {
           try {
-            navigator.clipboard.writeText(results.innerText);
+            navigator.clipboard.writeText(results.value);
             e.target.textContent = "Đã sao chép";
 
             setTimeout(() => {
